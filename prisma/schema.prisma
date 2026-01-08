@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+
+model Employee {
+  id          String   @id @default(uuid())
+  employeeId  String   @unique
+  name        String
+  email       String   @unique
+  phone       String?
+  department  String?
+  position    String?
+  joinDate    DateTime?
+  status      EmployeeStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  attendances Attendance[]
+
+  @@map("employees")
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+}
+
+model Attendance {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  date       DateTime
+  checkIn    DateTime?
+  checkOut   DateTime?
+  status     AttendanceStatus @default(PRESENT)
+  workMode   WorkMode @default(WFH)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  photoUrl   String?
+
+  @@unique([employeeId, date])
+  @@map("attendances")
+}
+
+enum WorkMode {
+  WFH
+  WFO
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+}

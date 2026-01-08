@@ -1,0 +1,31 @@
+services:
+  hr-ops-portal-backend-dev:
+    container_name: hr-ops-portal-backend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - hr-ops-portal-mysql
+
+  hr-ops-portal-mysql:
+    container_name: hr-ops-portal-mysql
+    image: mysql:8.0
+    ports:
+      - '3307:3306'
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
