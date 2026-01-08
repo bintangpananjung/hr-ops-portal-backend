@@ -5,13 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
-  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 
@@ -20,6 +20,7 @@ model Employee {
   employeeId  String   @unique
   name        String
   email       String   @unique
+  password    String
   phone       String?
   department  String?
   position    String?
@@ -28,8 +29,32 @@ model Employee {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   attendances Attendance[]
+  roles       EmployeeRole[]
 
   @@map("employees")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  employees   EmployeeRole[]
+
+  @@map("roles")
+}
+
+model EmployeeRole {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  roleId     String
+  role       Role     @relation(fields: [roleId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([employeeId, roleId])
+  @@map("employee_roles")
 }
 
 enum EmployeeStatus {
