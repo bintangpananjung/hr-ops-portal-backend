@@ -52,4 +52,42 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
   }
+
+  async getCurrentUser(userId: string) {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        employeeId: true,
+        name: true,
+        email: true,
+        phone: true,
+        department: true,
+        position: true,
+        joinDate: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        roles: {
+          select: {
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!employee) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return {
+      ...employee,
+      roles: employee.roles.map((r) => r.role),
+    };
+  }
 }
