@@ -1,8 +1,11 @@
 import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
-import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
-import { AuthenticatedUserDto } from './dtos/authenticated-user.dto';
+import { ResponseMapper } from 'src/common/mappers/response.mapper';
+import {
+  CurrentUserResponse,
+  LoginResponse,
+} from './dtos/authenticated-user.dto';
 import { JwtGuard } from './guards/jwt.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import type { JwtUser } from './types/jwt-user.type';
@@ -23,14 +26,15 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Login successful',
-    type: BaseResponseDto<AuthenticatedUserDto>,
+    type: LoginResponse,
   })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(
-    @Body() dto: LoginDto,
-  ): Promise<BaseResponseDto<AuthenticatedUserDto>> {
+  async login(@Body() dto: LoginDto) {
     const authenticatedUser = await this.authService.login(dto);
-    return BaseResponseDto.success(authenticatedUser, 'Login successful');
+    return ResponseMapper.toSuccessResponse(
+      authenticatedUser,
+      'Login successful',
+    );
   }
 
   @Get('current')
@@ -38,14 +42,14 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Current user retrieved successfully',
-    type: AuthenticatedUserDto,
+    type: CurrentUserResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   async getCurrentEmployee(@CurrentUser() user: JwtUser) {
     const currentUser = await this.authService.getCurrentEmployee(user.sub);
-    return BaseResponseDto.success(
+    return ResponseMapper.toSuccessResponse(
       currentUser,
       'Current user retrieved successfully',
     );

@@ -16,7 +16,7 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { RoleName } from 'src/common/enums/role.enum';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import type { JwtUser } from 'src/auth/types/jwt-user.type';
-import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
+import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import {
   ApiTags,
@@ -27,7 +27,11 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
-import { AttendanceDto } from './dto/attendance.dto';
+import {
+  AttendanceListResponse,
+  AttendanceResponse,
+} from './dto/attendance.dto';
+import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
 @ApiTags('Attendances')
 @Controller('attendances')
@@ -41,7 +45,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Attend successful',
-    type: AttendanceDto,
+    type: AttendanceResponse,
   })
   @ApiResponse({ status: 400, description: 'Already checked in for today' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -54,7 +58,7 @@ export class AttendancesController {
       user.sub,
       attendanceDto,
     );
-    return BaseResponseDto.success(attendance, 'Attend successful');
+    return ResponseMapper.toSuccessResponse(attendance, 'Attend successful');
   }
 
   @Get('current')
@@ -72,7 +76,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Attendances retrieved successfully',
-    type: [AttendanceDto],
+    type: AttendanceListResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard)
@@ -86,7 +90,7 @@ export class AttendancesController {
       startDate,
       endDate,
     );
-    return BaseResponseDto.success(
+    return ResponseMapper.toSuccessResponse(
       attendances,
       'Attendances retrieved successfully',
     );
@@ -97,7 +101,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Today attendance retrieved successfully',
-    type: AttendanceDto,
+    type: AttendanceResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard)
@@ -105,7 +109,7 @@ export class AttendancesController {
     const attendance = await this.attendancesService.findTodayAttendance(
       user.sub,
     );
-    return BaseResponseDto.success(
+    return ResponseMapper.toSuccessResponse(
       attendance,
       'Today attendance retrieved successfully',
     );
@@ -127,7 +131,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Employee attendances retrieved successfully',
-    type: [AttendanceDto],
+    type: AttendanceListResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
@@ -143,7 +147,7 @@ export class AttendancesController {
       startDate,
       endDate,
     );
-    return BaseResponseDto.success(
+    return ResponseMapper.toSuccessResponse(
       attendances,
       'Employee attendances retrieved successfully',
     );
@@ -169,7 +173,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'All attendances retrieved successfully',
-    type: [AttendanceDto],
+    type: AttendanceListResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
@@ -185,7 +189,7 @@ export class AttendancesController {
       endDate,
       employeeId,
     );
-    return BaseResponseDto.success(
+    return ResponseMapper.toSuccessResponse(
       attendances,
       'All attendances retrieved successfully',
     );
@@ -197,7 +201,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Attendance updated successfully',
-    type: AttendanceDto,
+    type: AttendanceResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
@@ -212,7 +216,7 @@ export class AttendancesController {
       id,
       updateAttendanceDto,
     );
-    return BaseResponseDto.success(
+    return ResponseMapper.toSuccessResponse(
       attendance,
       'Attendance updated successfully',
     );
@@ -221,7 +225,11 @@ export class AttendancesController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete attendance (Admin only)' })
   @ApiParam({ name: 'id', description: 'Attendance ID' })
-  @ApiResponse({ status: 200, description: 'Attendance deleted successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Attendance deleted successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   @ApiResponse({ status: 404, description: 'Attendance not found' })
@@ -229,6 +237,9 @@ export class AttendancesController {
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
   async remove(@Param('id') id: string) {
     await this.attendancesService.remove(id);
-    return BaseResponseDto.success(null, 'Attendance deleted successfully');
+    return ResponseMapper.toSuccessResponse(
+      null,
+      'Attendance deleted successfully',
+    );
   }
 }

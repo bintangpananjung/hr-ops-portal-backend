@@ -11,12 +11,17 @@ import {
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { EmployeeDto } from './dto/employee.dto';
+import {
+  EmployeeDtoListResponse,
+  EmployeeDtoResponse,
+} from './dto/employee.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { RoleName } from 'src/common/enums/role.enum';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
+import { ResponseMapper } from 'src/common/mappers/response.mapper';
 
 @ApiTags('Employees')
 @Controller('employees')
@@ -28,7 +33,7 @@ export class EmployeesController {
   @ApiResponse({
     status: 200,
     description: 'Employee created successfully',
-    type: EmployeeDto,
+    type: EmployeeDtoResponse,
   })
   @ApiResponse({
     status: 400,
@@ -37,8 +42,12 @@ export class EmployeesController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.employeesService.create(createEmployeeDto);
+  async create(@Body() createEmployeeDto: CreateEmployeeDto) {
+    const employee = await this.employeesService.create(createEmployeeDto);
+    return ResponseMapper.toSuccessResponse(
+      employee,
+      'Employee created successfully',
+    );
   }
 
   @Get()
@@ -46,13 +55,17 @@ export class EmployeesController {
   @ApiResponse({
     status: 200,
     description: 'Employees retrieved successfully',
-    type: [EmployeeDto],
+    type: EmployeeDtoListResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
-  findAll() {
-    return this.employeesService.findAll();
+  async findAll() {
+    const employees = await this.employeesService.findAll();
+    return ResponseMapper.toSuccessResponse(
+      employees,
+      'Employees retrieved successfully',
+    );
   }
 
   @Get(':id')
@@ -60,13 +73,17 @@ export class EmployeesController {
   @ApiResponse({
     status: 200,
     description: 'Employee retrieved successfully',
-    type: EmployeeDto,
+    type: EmployeeDtoResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
-  findOne(@Param('id') id: string) {
-    return this.employeesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const employee = await this.employeesService.findOne(id);
+    return ResponseMapper.toSuccessResponse(
+      employee,
+      'Employee retrieved successfully',
+    );
   }
 
   @Patch(':id')
@@ -74,25 +91,37 @@ export class EmployeesController {
   @ApiResponse({
     status: 200,
     description: 'Employee updated successfully',
-    type: EmployeeDto,
+    type: EmployeeDtoResponse,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeesService.update(id, updateEmployeeDto);
+    const employee = await this.employeesService.update(id, updateEmployeeDto);
+    return ResponseMapper.toSuccessResponse(
+      employee,
+      'Employee updated successfully',
+    );
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete employee by ID' })
-  @ApiResponse({ status: 200, description: 'Employee deleted successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Employee deleted successfully',
+    type: BaseResponseDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
-  remove(@Param('id') id: string) {
-    return this.employeesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.employeesService.remove(id);
+    return ResponseMapper.toSuccessResponse(
+      null,
+      'Employee deleted successfully',
+    );
   }
 }

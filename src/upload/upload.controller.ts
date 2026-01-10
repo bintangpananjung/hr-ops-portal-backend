@@ -9,7 +9,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
+import { ResponseMapper } from 'src/common/mappers/response.mapper';
 import { UploadResponseDto } from './dto/upload-response.dto';
 import {
   ApiTags,
@@ -56,6 +56,9 @@ export class UploadController {
     }
 
     const url = this.uploadService.uploadPhoto(file);
-    return BaseResponseDto.success({ url }, 'Photo uploaded successfully');
+    return ResponseMapper.toSuccessResponse(
+      { url },
+      'Photo uploaded successfully',
+    );
   }
 }

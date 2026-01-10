@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { BaseResponseDto } from '../dtos/base-response.dto';
+import { ResponseMapper } from '../mappers/response.mapper';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -30,7 +30,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = 'An error occurred';
     }
 
-    const errorResponse = BaseResponseDto.error(message);
+    const errorResponse = ResponseMapper.toErrorResponse(message);
 
     response.status(status).json(errorResponse);
   }
@@ -62,7 +62,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : 'Internal server error';
     }
 
-    const errorResponse = BaseResponseDto.error(message);
+    const errorResponse = ResponseMapper.toErrorResponse(message);
 
     response.status(status).json(errorResponse);
   }

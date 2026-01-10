@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
 export class AttendanceDto {
   @ApiProperty({ example: 'uuid' })
@@ -24,4 +25,14 @@ export class AttendanceDto {
 
   @ApiProperty({ example: '2024-01-10T00:00:00.000Z' })
   updatedAt: Date;
+}
+
+export class AttendanceResponse extends BaseResponseDto {
+  @ApiProperty({ type: () => AttendanceDto })
+  data: AttendanceDto;
+}
+
+export class AttendanceListResponse extends BaseResponseDto {
+  @ApiProperty({ type: () => [AttendanceDto] })
+  data: AttendanceDto[];
 }

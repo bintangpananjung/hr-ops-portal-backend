@@ -1,5 +1,6 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
 export class AuthenticatedUserDto {
   @ApiProperty({ example: 'user@example.com' })
@@ -29,4 +30,14 @@ export class AuthenticatedUserDto {
   constructor(partial: Partial<AuthenticatedUserDto>) {
     Object.assign(this, partial);
   }
+}
+
+export class LoginResponse extends BaseResponseDto {
+  @ApiProperty({ type: AuthenticatedUserDto })
+  data: AuthenticatedUserDto;
+}
+
+export class CurrentUserResponse extends BaseResponseDto {
+  @ApiProperty({ type: AuthenticatedUserDto })
+  data: AuthenticatedUserDto;
 }
