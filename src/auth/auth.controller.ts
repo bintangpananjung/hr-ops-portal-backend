@@ -21,8 +21,8 @@ export class AuthController {
 
   @Get('current')
   @UseGuards(JwtGuard)
-  async getCurrentUser(@CurrentUser() user: JwtUser) {
-    const currentUser = await this.authService.getCurrentUser(user.sub);
+  async getCurrentEmployee(@CurrentUser() user: JwtUser) {
+    const currentUser = await this.authService.getCurrentEmployee(user.sub);
     return BaseResponseDto.success(
       currentUser,
       'Current user retrieved successfully',

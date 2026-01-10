@@ -70,11 +70,10 @@ model Attendance {
   date       DateTime
   checkIn    DateTime?
   checkOut   DateTime?
-  status     AttendanceStatus @default(PRESENT)
   workMode   WorkMode @default(WFH)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  photoUrl   String?
+  photoUrl   String
 
   @@unique([employeeId, date])
   @@map("attendances")
@@ -83,9 +82,4 @@ model Attendance {
 enum WorkMode {
   WFH
   WFO
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
 }

@@ -53,9 +53,9 @@ export class AuthService {
     }
   }
 
-  async getCurrentUser(userId: string) {
+  async getCurrentEmployee(employeeId: string) {
     const employee = await this.prisma.employee.findUnique({
-      where: { id: userId },
+      where: { id: employeeId },
       select: {
         id: true,
         employeeId: true,
