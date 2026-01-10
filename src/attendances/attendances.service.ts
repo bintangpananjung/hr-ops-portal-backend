@@ -51,6 +51,8 @@ export class AttendancesService {
         date: today,
         workMode: createAttendanceDto.workMode,
         photoUrl: createAttendanceDto.photoUrl,
+        checkIn: createAttendanceDto.checkIn,
+        checkOut: createAttendanceDto.checkOut,
       },
       include: {
         employee: {

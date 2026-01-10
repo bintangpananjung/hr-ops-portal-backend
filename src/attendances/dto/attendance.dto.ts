@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsDateString, IsOptional } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
 export class AttendanceDto {
@@ -11,8 +12,15 @@ export class AttendanceDto {
   @ApiProperty({ example: '2024-01-10T00:00:00.000Z' })
   date: Date;
 
-  @ApiProperty({ example: 'CHECK_IN', enum: ['CHECK_IN', 'CHECK_OUT'] })
-  type: string;
+  @ApiProperty({ example: '2024-01-10T00:00:00.000Z' })
+  @IsOptional()
+  @IsDateString()
+  checkIn?: Date;
+
+  @ApiProperty({ example: '2024-01-10T00:00:00.000Z' })
+  @IsOptional()
+  @IsDateString()
+  checkOut?: Date;
 
   @ApiProperty({ example: 'WFH', enum: ['WFH', 'WFO'] })
   workMode: string;

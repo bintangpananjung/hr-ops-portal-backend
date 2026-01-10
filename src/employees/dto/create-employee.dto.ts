@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsString, IsUUID } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { EmployeeStatus } from 'src/generated/prisma';
 
 export class CreateEmployeeDto {
@@ -32,8 +38,9 @@ export class CreateEmployeeDto {
   position?: string;
 
   @IsDateString()
-  @ApiProperty({ example: '2022-01-01' })
-  joinDate?: string;
+  @IsOptional()
+  @ApiProperty({ example: '2024-01-10T00:00:00.000Z' })
+  joinDate?: Date;
 
   @IsEnum(EmployeeStatus)
   @ApiProperty({ example: 'ACTIVE' })
