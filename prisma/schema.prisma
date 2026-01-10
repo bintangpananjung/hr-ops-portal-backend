@@ -68,8 +68,7 @@ model Attendance {
   employeeId String
   employee   Employee @relation(fields: [employeeId], references: [id])
   date       DateTime
-  checkIn    DateTime?
-  checkOut   DateTime?
+  type       AttendanceType @default(CHECK_IN)
   workMode   WorkMode @default(WFH)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -77,6 +76,11 @@ model Attendance {
 
   @@unique([employeeId, date])
   @@map("attendances")
+}
+
+enum AttendanceType {
+  CHECK_IN
+  CHECK_OUT
 }
 
 enum WorkMode {

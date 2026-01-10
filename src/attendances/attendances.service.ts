@@ -1,15 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { CheckInDto } from './dto/check-in.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
-import { CheckOutDto } from './dto/check-out.dto';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma } from 'src/generated/prisma';
+import { CreateAttendanceDto } from './dto/create-attendance.dto';
 
 @Injectable()
 export class AttendancesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async checkIn(employeeId: string, checkInDto: CheckInDto) {
+  async attend(employeeId: string, checkInDto: CreateAttendanceDto) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -30,7 +29,7 @@ export class AttendancesService {
       data: {
         employeeId,
         date: today,
-        checkIn: checkInDto.checkIn ? new Date(checkInDto.checkIn) : new Date(),
+        type: checkInDto.type,
         workMode: checkInDto.workMode,
         photoUrl: checkInDto.photoUrl,
       },
@@ -46,47 +45,6 @@ export class AttendancesService {
       },
     });
   }
-
-  async checkOut(employeeId: string, checkOutDto: CheckOutDto) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const attendance = await this.prisma.attendance.findUnique({
-      where: {
-        employeeId_date: {
-          employeeId,
-          date: today,
-        },
-      },
-    });
-
-    if (!attendance) {
-      throw new BadRequestException('No check-in record found for today');
-    }
-
-    if (attendance.checkOut) {
-      throw new BadRequestException('Already checked out today');
-    }
-
-    return this.prisma.attendance.update({
-      where: { id: attendance.id },
-      data: {
-        checkOut: new Date(checkOutDto.checkOut),
-        photoUrl: checkOutDto.photoUrl,
-      },
-      include: {
-        employee: {
-          select: {
-            id: true,
-            employeeId: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-    });
-  }
-
   async findByEmployeeId(
     employeeId: string,
     startDate?: string,
@@ -176,12 +134,7 @@ export class AttendancesService {
     return this.prisma.attendance.update({
       where: { id },
       data: {
-        checkIn: updateAttendanceDto.checkIn
-          ? new Date(updateAttendanceDto.checkIn)
-          : undefined,
-        checkOut: updateAttendanceDto.checkOut
-          ? new Date(updateAttendanceDto.checkOut)
-          : undefined,
+        type: updateAttendanceDto.type,
         workMode: updateAttendanceDto.workMode,
         photoUrl: updateAttendanceDto.photoUrl,
       },

@@ -1,26 +1,4 @@
-import { IsString, IsDateString, IsOptional, IsEnum } from 'class-validator';
-import { WorkMode } from 'src/generated/prisma';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateAttendanceDto } from './create-attendance.dto';
 
-export class UpdateAttendanceDto {
-  @IsString()
-  employeeId: string;
-
-  @IsDateString()
-  date: string;
-
-  @IsOptional()
-  @IsDateString()
-  checkIn?: string;
-
-  @IsOptional()
-  @IsDateString()
-  checkOut?: string;
-
-  @IsOptional()
-  @IsEnum(WorkMode)
-  workMode?: WorkMode;
-
-  @IsOptional()
-  @IsString()
-  photoUrl?: string;
-}
+export class UpdateAttendanceDto extends PartialType(CreateAttendanceDto) {}

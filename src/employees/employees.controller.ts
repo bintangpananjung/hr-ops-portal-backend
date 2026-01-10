@@ -15,12 +15,21 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { RoleName } from 'src/common/enums/role.enum';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('Employees')
 @Controller('employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create new employee' })
+  @ApiResponse({ status: 200, description: 'Employee created successfully' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
@@ -28,6 +37,9 @@ export class EmployeesController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all employees' })
+  @ApiResponse({ status: 200, description: 'Employees retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
   findAll() {
@@ -35,6 +47,9 @@ export class EmployeesController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get employee by ID' })
+  @ApiResponse({ status: 200, description: 'Employee retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
   findOne(@Param('id') id: string) {
@@ -42,6 +57,9 @@ export class EmployeesController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update employee by ID' })
+  @ApiResponse({ status: 200, description: 'Employee updated successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
   update(
@@ -52,6 +70,9 @@ export class EmployeesController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete employee by ID' })
+  @ApiResponse({ status: 200, description: 'Employee deleted successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
   remove(@Param('id') id: string) {

@@ -1,13 +1,13 @@
-import { Exclude, Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseResponseDto<T> {
-  @Expose()
+  @ApiProperty({ example: true })
   success: boolean;
 
-  @Expose()
+  @ApiProperty({ example: 'Request successful' })
   message: string;
 
-  @Expose()
+  @ApiProperty({ example: null })
   data: T;
 
   constructor(success: boolean, message: string, data: T) {
