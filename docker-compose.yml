@@ -15,6 +15,8 @@ services:
     depends_on:
       - hr-ops-portal-mysql
     command: ['sh', '-c', 'pnpm exec prisma generate && pnpm run start:dev']
+    networks:
+      - hr-ops-portal-network
 
   hr-ops-portal-mysql:
     container_name: hr-ops-portal-mysql
@@ -27,6 +29,12 @@ services:
       - mysql_data:/var/lib/mysql
       - ./init-mysql.sql:/docker-entrypoint-initdb.d/init.sql
     restart: unless-stopped
+    networks:
+      - hr-ops-portal-network
 
 volumes:
   mysql_data:
+
+networks:
+  hr-ops-portal-network:
+    driver: bridge
