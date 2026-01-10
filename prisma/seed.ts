@@ -113,6 +113,20 @@ async function main() {
     },
   });
 
+  await prisma.employeeRole.upsert({
+    where: {
+      employeeId_roleId: {
+        employeeId: regularEmployee.id,
+        roleId: employeeRole.id,
+      },
+    },
+    update: {},
+    create: {
+      employeeId: regularEmployee.id,
+      roleId: employeeRole.id,
+    },
+  });
+
   console.log('Roles assigned to employees');
   console.log('\n=== Seed Data Summary ===');
   console.log('SuperAdmin Account:');

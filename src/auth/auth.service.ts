@@ -23,34 +23,31 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<AuthenticatedUserDto> {
-    try {
-      const employee = await this.prisma.employee.findUniqueOrThrow({
-        where: { email: dto.email },
-        include: {
-          roles: { include: { role: true } },
-        },
-      });
+    const employee = await this.prisma.employee.findUniqueOrThrow({
+      where: { email: dto.email },
+      include: {
+        roles: { include: { role: true } },
+      },
+    });
 
-      if (!employee) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
-
-      await this.validatePassword(dto.password, employee.password);
-      const accessToken = this.signToken({
-        email: employee.email,
-        sub: employee.id,
-        roles: employee.roles.map((role) => role.role.name),
-      });
-
-      return new AuthenticatedUserDto({
-        accessToken,
-        id: employee.id,
-        name: employee.name,
-        email: employee.email,
-      });
-    } catch {
+    if (!employee) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    await this.validatePassword(dto.password, employee.password);
+    const accessToken = this.signToken({
+      email: employee.email,
+      sub: employee.id,
+      roles: employee.roles.map((role) => role.role.name),
+    });
+
+    return new AuthenticatedUserDto({
+      accessToken,
+      id: employee.id,
+      name: employee.name,
+      email: employee.email,
+      roles: employee.roles.map((role) => role.role.name),
+    });
   }
 
   async getCurrentEmployee(employeeId: string) {

@@ -47,10 +47,20 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const message =
-      exception instanceof HttpException
-        ? exception.message
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    let message: string;
+    if (exception instanceof HttpException) {
+      message = exception.message;
+    } else if (exception instanceof Error) {
+      message = isDevelopment
+        ? `${exception.message}\n\nStack trace:\n${exception.stack}`
         : 'Internal server error';
+    } else {
+      message = isDevelopment
+        ? `Unknown error: ${String(exception)}`
+        : 'Internal server error';
+    }
 
     const errorResponse = BaseResponseDto.error(message);
 

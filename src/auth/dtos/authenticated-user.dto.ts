@@ -18,6 +18,14 @@ export class AuthenticatedUserDto {
   @Expose()
   accessToken: string;
 
+  @ApiProperty({
+    example: ['EMPLOYEE'],
+    type: [String],
+    description: 'User roles',
+  })
+  @Expose()
+  roles: string[];
+
   constructor(partial: Partial<AuthenticatedUserDto>) {
     Object.assign(this, partial);
   }
