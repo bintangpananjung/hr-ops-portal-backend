@@ -3,11 +3,17 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { PrismaService } from 'src/prisma.service';
 import { Employee } from 'src/generated/prisma';
+import * as bcrypt from 'bcrypt';
+import { SALT_ROUNDS } from 'src/auth/constant/auth.constant';
 
 @Injectable()
 export class EmployeesService {
   constructor(private readonly prisma: PrismaService) {}
   create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
+    createEmployeeDto.password = bcrypt.hashSync(
+      createEmployeeDto.password,
+      SALT_ROUNDS,
+    );
     return this.prisma.employee.create({
       data: createEmployeeDto,
     });
