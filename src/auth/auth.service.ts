@@ -84,7 +84,7 @@ export class AuthService {
 
     return {
       ...employee,
-      roles: employee.roles.map((r) => r.role),
+      roles: employee.roles.map((r) => r.role.name),
     };
   }
 }

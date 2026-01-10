@@ -16,6 +16,14 @@ export class CreateAttendanceDto {
   type: AttendanceType;
 
   @IsOptional()
+  @IsDateString()
+  checkIn?: string;
+
+  @IsOptional()
+  @IsDateString()
+  checkOut?: string;
+
+  @IsOptional()
   @IsEnum(WorkMode)
   workMode?: WorkMode;
 

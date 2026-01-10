@@ -68,7 +68,8 @@ model Attendance {
   employeeId String
   employee   Employee @relation(fields: [employeeId], references: [id])
   date       DateTime
-  type       AttendanceType @default(CHECK_IN)
+  checkIn    DateTime?
+  checkOut   DateTime?
   workMode   WorkMode @default(WFH)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

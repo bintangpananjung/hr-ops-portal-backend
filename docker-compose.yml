@@ -12,9 +12,11 @@ services:
       - .env
     environment:
       - NODE_ENV=development
+      - CI=true
     depends_on:
       - hr-ops-portal-mysql
-    command: ['sh', '-c', 'pnpm exec prisma generate && pnpm run start:dev']
+    command:
+      ['sh', '-c', 'pnpm i && pnpm exec prisma generate && pnpm run start:dev']
     networks:
       - hr-ops-portal-network
 

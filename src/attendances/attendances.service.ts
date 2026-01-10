@@ -1,14 +1,14 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
 import { PrismaService } from 'src/prisma.service';
-import { AttendanceType, Prisma } from 'src/generated/prisma';
+import { Prisma } from 'src/generated/prisma';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 
 @Injectable()
 export class AttendancesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async attend(employeeId: string, checkInDto: CreateAttendanceDto) {
+  async attend(employeeId: string, createAttendanceDto: CreateAttendanceDto) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -22,13 +22,6 @@ export class AttendancesService {
     });
 
     if (existingAttendance) {
-      if (checkInDto.type === AttendanceType.CHECK_IN) {
-        throw new BadRequestException('Already checked in today');
-      }
-      if (existingAttendance.type === AttendanceType.CHECK_OUT) {
-        throw new BadRequestException('Already checked out today');
-      }
-
       // Update existing CHECK_IN to CHECK_OUT
       return this.prisma.attendance.update({
         where: {
@@ -37,10 +30,7 @@ export class AttendancesService {
             date: today,
           },
         },
-        data: {
-          type: checkInDto.type,
-          photoUrl: checkInDto.photoUrl,
-        },
+        data: createAttendanceDto,
         include: {
           employee: {
             select: {
@@ -59,9 +49,8 @@ export class AttendancesService {
       data: {
         employeeId,
         date: today,
-        type: checkInDto.type,
-        workMode: checkInDto.workMode,
-        photoUrl: checkInDto.photoUrl,
+        workMode: createAttendanceDto.workMode,
+        photoUrl: createAttendanceDto.photoUrl,
       },
       include: {
         employee: {
@@ -164,9 +153,10 @@ export class AttendancesService {
     return this.prisma.attendance.update({
       where: { id },
       data: {
-        type: updateAttendanceDto.type,
         workMode: updateAttendanceDto.workMode,
         photoUrl: updateAttendanceDto.photoUrl,
+        checkIn: updateAttendanceDto.checkIn,
+        checkOut: updateAttendanceDto.checkOut,
       },
       include: {
         employee: {
