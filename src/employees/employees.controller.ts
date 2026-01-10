@@ -11,6 +11,7 @@ import {
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeDto } from './dto/employee.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { RolesGuard } from 'src/auth/guards/role.guard';
@@ -24,7 +25,11 @@ export class EmployeesController {
 
   @Post()
   @ApiOperation({ summary: 'Create new employee' })
-  @ApiResponse({ status: 200, description: 'Employee created successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Employee created successfully',
+    type: EmployeeDto,
+  })
   @ApiResponse({
     status: 400,
     description: 'Bad request',
@@ -38,7 +43,11 @@ export class EmployeesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all employees' })
-  @ApiResponse({ status: 200, description: 'Employees retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Employees retrieved successfully',
+    type: [EmployeeDto],
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
@@ -48,7 +57,11 @@ export class EmployeesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get employee by ID' })
-  @ApiResponse({ status: 200, description: 'Employee retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Employee retrieved successfully',
+    type: EmployeeDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)
@@ -58,7 +71,11 @@ export class EmployeesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update employee by ID' })
-  @ApiResponse({ status: 200, description: 'Employee updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Employee updated successfully',
+    type: EmployeeDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleName.SUPERADMIN, RoleName.ADMIN, RoleName.HR)

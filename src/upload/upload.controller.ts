@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
+import { UploadResponseDto } from './dto/upload-response.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -41,7 +42,11 @@ export class UploadController {
       },
     },
   })
-  @ApiResponse({ status: 200, description: 'Photo uploaded successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Photo uploaded successfully',
+    type: UploadResponseDto,
+  })
   @ApiResponse({ status: 400, description: 'Invalid file type or size' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseInterceptors(FileInterceptor('file'))

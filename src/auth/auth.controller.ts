@@ -20,7 +20,11 @@ export class AuthController {
 
   @Post('login')
   @ApiOperation({ summary: 'Login to get access token' })
-  @ApiResponse({ status: 200, description: 'Login successful' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login successful',
+    type: BaseResponseDto<AuthenticatedUserDto>,
+  })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async login(
     @Body() dto: LoginDto,
@@ -34,6 +38,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Current user retrieved successfully',
+    type: AuthenticatedUserDto,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth()

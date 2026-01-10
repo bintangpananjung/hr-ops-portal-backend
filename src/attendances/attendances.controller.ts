@@ -27,6 +27,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
+import { AttendanceDto } from './dto/attendance.dto';
 
 @ApiTags('Attendances')
 @Controller('attendances')
@@ -37,7 +38,11 @@ export class AttendancesController {
 
   @Post('')
   @ApiOperation({ summary: 'Attend (check-in/check-out)' })
-  @ApiResponse({ status: 200, description: 'Attend successful' })
+  @ApiResponse({
+    status: 200,
+    description: 'Attend successful',
+    type: AttendanceDto,
+  })
   @ApiResponse({ status: 400, description: 'Already checked in for today' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard)
@@ -67,6 +72,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Attendances retrieved successfully',
+    type: [AttendanceDto],
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard)
@@ -91,6 +97,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Today attendance retrieved successfully',
+    type: AttendanceDto,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtGuard)
@@ -120,6 +127,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'Employee attendances retrieved successfully',
+    type: [AttendanceDto],
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
@@ -161,6 +169,7 @@ export class AttendancesController {
   @ApiResponse({
     status: 200,
     description: 'All attendances retrieved successfully',
+    type: [AttendanceDto],
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
@@ -185,7 +194,11 @@ export class AttendancesController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update attendance (Admin only)' })
   @ApiParam({ name: 'id', description: 'Attendance ID' })
-  @ApiResponse({ status: 200, description: 'Attendance updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Attendance updated successfully',
+    type: AttendanceDto,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   @ApiResponse({ status: 404, description: 'Attendance not found' })
