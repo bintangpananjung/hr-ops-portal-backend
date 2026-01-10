@@ -32,6 +32,12 @@ export class EmployeesService {
   }
 
   update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+    if (updateEmployeeDto.password) {
+      updateEmployeeDto.password = bcrypt.hashSync(
+        updateEmployeeDto.password,
+        SALT_ROUNDS,
+      );
+    }
     return this.prisma.employee.update({
       where: {
         id,
